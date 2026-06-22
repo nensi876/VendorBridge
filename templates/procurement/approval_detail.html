@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Approval Detail{% endblock %}
+{% block content %}
+<h1 class="page-title">Approval: {{ approval.rfq.rfq_number }}</h1>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Request Details</div>
+            <div class="card-body">
+                <p><strong>RFQ:</strong> {{ approval.rfq.title }}</p>
+                <p><strong>Vendor:</strong> {{ approval.quotation.vendor.company_name|default:"—" }}</p>
+                <p><strong>Quoted Price:</strong> ₹{{ approval.quotation.quoted_price|floatformat:2|default:"—" }}</p>
+                <p><strong>Status:</strong> {{ approval.get_status_display }}</p>
+                <p><strong>Remarks:</strong> {{ approval.remarks|default:"—" }}</p>
+                {% if approval.status == 'pending' %}
+                <a href="{% url 'procurement:approval_action' approval.pk 'approve' %}" class="btn btn-success">Approve</a>
+                <a href="{% url 'procurement:approval_action' approval.pk 'reject' %}" class="btn btn-danger">Reject</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Approval Timeline</div>
+            <div class="card-body">
+                {% for t in timeline %}
+                <div class="border-start border-3 ps-3 mb-3 {% if t.status == 'approved' %}border-success{% elif t.status == 'rejected' %}border-danger{% else %}border-warning{% endif %}">
+                    <strong>{{ t.get_status_display }}</strong>
+                    {% if t.approver %} — {{ t.approver.get_full_name }}{% endif %}
+                    <br><small>{{ t.created_at|date:"d M Y H:i" }}</small>
+                    {% if t.remarks %}<br><em>{{ t.remarks }}</em>{% endif %}
+                </div>
+                {% empty %}
+                <p class="text-muted">No timeline entries.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block auth_content %}
+<div class="auth-wrapper">
+    <div class="auth-card" style="max-width:520px;">
+        <div class="auth-logo">
+            <h1><i class="bi bi-person-plus"></i> Register</h1>
+            <p>Create your VendorBridge account</p>
+        </div>
+        {% include 'partials/messages.html' %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                {{ form.email }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Phone</label>
+                {{ form.phone }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Role</label>
+                {{ form.role }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                {{ form.password1 }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Confirm Password</label>
+                {{ form.password2 }}
+            </div>
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}{{ error }}<br>{% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            <button type="submit" class="btn btn-vb-primary w-100 mb-3">Register</button>
+        </form>
+        <div class="text-center">
+            <a href="{% url 'accounts:login' %}">Already have an account? Sign In</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

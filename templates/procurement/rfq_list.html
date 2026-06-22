@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}RFQs{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="page-title mb-0">Request for Quotations</h1>
+        <p class="page-subtitle mb-0">Manage procurement RFQs</p>
+    </div>
+    <a href="{% url 'procurement:rfq_create' %}" class="btn btn-vb-primary"><i class="bi bi-plus-lg"></i> Create RFQ</a>
+</div>
+
+<div class="filter-bar">
+    <form method="get" class="row g-2">
+        <div class="col-md-4"><input type="text" name="q" class="form-control" placeholder="Search RFQs..." value="{{ q }}"></div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="open" {% if selected_status == 'open' %}selected{% endif %}>Open</option>
+                <option value="closed" {% if selected_status == 'closed' %}selected{% endif %}>Closed</option>
+                <option value="awarded" {% if selected_status == 'awarded' %}selected{% endif %}>Awarded</option>
+            </select>
+        </div>
+        <div class="col-md-2"><button type="submit" class="btn btn-vb-primary">Filter</button></div>
+    </form>
+</div>
+
+<div class="card-panel">
+    <div class="card-body p-0">
+        <table class="table table-vb mb-0">
+            <thead>
+                <tr><th>RFQ #</th><th>Title</th><th>Product</th><th>Qty</th><th>Deadline</th><th>Quotes</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for rfq in rfqs %}
+                <tr>
+                    <td><a href="{% url 'procurement:rfq_detail' rfq.pk %}">{{ rfq.rfq_number }}</a></td>
+                    <td>{{ rfq.title }}</td>
+                    <td>{{ rfq.product_name }}</td>
+                    <td>{{ rfq.quantity }}</td>
+                    <td>{{ rfq.deadline|date:"d M Y H:i" }}</td>
+                    <td>{{ rfq.quotation_count }}</td>
+                    <td><span class="badge bg-info">{{ rfq.get_status_display }}</span></td>
+                    <td>
+                        <a href="{% url 'procurement:rfq_assign' rfq.pk %}" class="btn btn-sm btn-outline-secondary" title="Assign Vendors"><i class="bi bi-people"></i></a>
+                        <a href="{% url 'procurement:quotation_compare' rfq.pk %}" class="btn btn-sm btn-outline-primary" title="Compare"><i class="bi bi-bar-chart"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center text-muted py-4">No RFQs found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

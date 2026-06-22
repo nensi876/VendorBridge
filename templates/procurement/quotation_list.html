@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Quotations{% endblock %}
+{% block content %}
+<h1 class="page-title">Quotations</h1>
+<div class="card-panel">
+    <div class="card-body p-0">
+        <table class="table table-vb mb-0">
+            <thead><tr><th>RFQ</th><th>Vendor</th><th>Price</th><th>Delivery</th><th>Status</th><th>Submitted</th></tr></thead>
+            <tbody>
+                {% for q in quotations %}
+                <tr>
+                    <td>{{ q.rfq.rfq_number }}</td>
+                    <td>{{ q.vendor.company_name }}</td>
+                    <td>₹{{ q.quoted_price|floatformat:2 }}</td>
+                    <td>{{ q.delivery_timeline }} days</td>
+                    <td>{{ q.get_status_display }}</td>
+                    <td>{{ q.submission_date|date:"d M Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No quotations found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

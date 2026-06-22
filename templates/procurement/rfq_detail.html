@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}{{ rfq.rfq_number }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="page-title mb-0">{{ rfq.rfq_number }}</h1>
+        <p class="page-subtitle mb-0">{{ rfq.title }}</p>
+    </div>
+    <div>
+        <a href="{% url 'procurement:rfq_assign' rfq.pk %}" class="btn btn-outline-secondary"><i class="bi bi-people"></i> Assign Vendors</a>
+        <a href="{% url 'procurement:quotation_compare' rfq.pk %}" class="btn btn-vb-primary"><i class="bi bi-bar-chart"></i> Compare Quotes</a>
+        <a href="{% url 'procurement:rfq_edit' rfq.pk %}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">RFQ Details</div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr><th>Product</th><td>{{ rfq.product_name }}</td></tr>
+                    <tr><th>Quantity</th><td>{{ rfq.quantity }}</td></tr>
+                    <tr><th>Deadline</th><td>{{ rfq.deadline|date:"d M Y H:i" }}</td></tr>
+                    <tr><th>Status</th><td><span class="badge bg-info">{{ rfq.get_status_display }}</span></td></tr>
+                    <tr><th>Created By</th><td>{{ rfq.created_by.get_full_name|default:"—" }}</td></tr>
+                    <tr><th>Description</th><td>{{ rfq.description }}</td></tr>
+                    {% if rfq.attachment %}
+                    <tr><th>Attachment</th><td><a href="{{ rfq.attachment.url }}" target="_blank">Download</a></td></tr>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Assigned Vendors ({{ rfq.assigned_vendors.count }})</div>
+            <div class="card-body">
+                {% for v in rfq.assigned_vendors.all %}
+                <span class="badge bg-secondary me-1 mb-1">{{ v.company_name }}</span>
+                {% empty %}
+                <p class="text-muted">No vendors assigned yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card-panel">
+            <div class="card-header">Approval Timeline</div>
+            <div class="card-body">
+                {% for a in approvals %}
+                <div class="border-start border-3 ps-3 mb-3 {% if a.status == 'approved' %}border-success{% elif a.status == 'rejected' %}border-danger{% else %}border-warning{% endif %}">
+                    <strong>{{ a.get_status_display }}</strong>
+                    {% if a.approver %} by {{ a.approver.get_full_name }}{% endif %}
+                    {% if a.approval_date %}<br><small>{{ a.approval_date|date:"d M Y H:i" }}</small>{% endif %}
+                    {% if a.remarks %}<br><em>{{ a.remarks }}</em>{% endif %}
+                </div>
+                {% empty %}
+                <p class="text-muted">No approvals yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-panel mt-3">
+    <div class="card-header">Quotations ({{ quotations.count }})</div>
+    <div class="card-body p-0">
+        <table class="table table-vb mb-0">
+            <thead><tr><th>Vendor</th><th>Price</th><th>Delivery</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for q in quotations %}
+                <tr>
+                    <td>{{ q.vendor.company_name }}</td>
+                    <td>₹{{ q.quoted_price|floatformat:2 }}</td>
+                    <td>{{ q.delivery_timeline }} days</td>
+                    <td><span class="badge bg-secondary">{{ q.get_status_display }}</span></td>
+                    <td>
+                        {% if q.status == 'submitted' %}
+                        <a href="{% url 'procurement:request_approval' rfq.pk q.pk %}" class="btn btn-sm btn-outline-success">Request Approval</a>
+                        {% endif %}
+                        {% if q.status == 'selected' and not q.purchase_order %}
+                        <a href="{% url 'procurement:po_generate' q.pk %}" class="btn btn-sm btn-vb-primary">Generate PO</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center text-muted">No quotations received.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

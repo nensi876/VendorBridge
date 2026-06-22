@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}{{ rfq.rfq_number }}{% endblock %}
+{% block content %}
+<h1 class="page-title">{{ rfq.rfq_number }} — {{ rfq.title }}</h1>
+<p class="page-subtitle">Deadline: {{ rfq.deadline|date:"d M Y H:i" }}</p>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">RFQ Details</div>
+            <div class="card-body">
+                <p><strong>Product:</strong> {{ rfq.product_name }}</p>
+                <p><strong>Quantity:</strong> {{ rfq.quantity }}</p>
+                <p><strong>Description:</strong> {{ rfq.description }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Your Quotation</div>
+            <div class="card-body">
+                {% if quotation %}
+                <p><strong>Price:</strong> ₹{{ quotation.quoted_price|floatformat:2 }}</p>
+                <p><strong>Delivery:</strong> {{ quotation.delivery_timeline }} days</p>
+                <p><strong>Status:</strong> {{ quotation.get_status_display }}</p>
+                {% if not rfq.is_deadline_passed %}
+                <a href="{% url 'procurement:quotation_edit' quotation.pk %}" class="btn btn-outline-primary">Edit Quotation</a>
+                {% else %}
+                <span class="text-muted">Deadline passed — editing disabled.</span>
+                {% endif %}
+                {% else %}
+                {% if not rfq.is_deadline_passed %}
+                <a href="{% url 'procurement:quotation_submit' rfq.pk %}" class="btn btn-vb-primary">Submit Quotation</a>
+                {% else %}
+                <span class="text-muted">Deadline passed.</span>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

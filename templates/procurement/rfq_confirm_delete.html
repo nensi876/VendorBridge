@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Delete RFQ{% endblock %}
+{% block content %}
+<h1 class="page-title">Delete RFQ</h1>
+<div class="card-panel">
+    <div class="card-body">
+        <p>Delete RFQ <strong>{{ rfq.rfq_number }} - {{ rfq.title }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'procurement:rfq_detail' rfq.pk %}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

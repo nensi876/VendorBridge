@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<h1 class="page-title">Manage Users</h1>
+<p class="page-subtitle">Admin user management</p>
+
+<div class="filter-bar">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="Search users..." value="{{ q }}">
+        </div>
+        <div class="col-md-3">
+            <select name="role" class="form-select">
+                <option value="">All Roles</option>
+                {% for val, label in roles %}
+                <option value="{{ val }}" {% if selected_role == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-vb-primary w-100">Filter</button>
+        </div>
+    </form>
+</div>
+
+<div class="card-panel">
+    <div class="card-body p-0">
+        <table class="table table-vb mb-0">
+            <thead>
+                <tr>
+                    <th>Username</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.get_full_name }}</td>
+                    <td>{{ u.email }}</td>
+                    <td><span class="badge bg-primary">{{ u.get_role_display }}</span></td>
+                    <td>
+                        {% if u.is_active %}<span class="badge bg-success">Active</span>
+                        {% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'accounts:edit_user' u.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'accounts:toggle_user' u.pk %}" class="btn btn-sm btn-outline-warning"><i class="bi bi-toggle-on"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

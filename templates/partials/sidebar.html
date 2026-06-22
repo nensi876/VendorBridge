@@ -1,0 +1,73 @@
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <h2><i class="bi bi-building"></i> VendorBridge</h2>
+        <small>Procurement ERP</small>
+    </div>
+    <div class="sidebar-nav">
+        {% if not user.is_vendor_role %}
+        <div class="nav-section">Main</div>
+        <a href="{% url 'core:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        {% endif %}
+
+        {% if user.is_admin_role or user.is_procurement_officer %}
+        <div class="nav-section">Procurement</div>
+        <a href="{% url 'vendors:list' %}" class="{% if 'vendors' in request.path %}active{% endif %}">
+            <i class="bi bi-people"></i> Vendors
+        </a>
+        <a href="{% url 'procurement:rfq_list' %}" class="{% if '/rfq' in request.path and 'vendor' not in request.path %}active{% endif %}">
+            <i class="bi bi-file-earmark-text"></i> RFQs
+        </a>
+        <a href="{% url 'procurement:quotation_list' %}">
+            <i class="bi bi-currency-dollar"></i> Quotations
+        </a>
+        <a href="{% url 'procurement:po_list' %}">
+            <i class="bi bi-cart-check"></i> Purchase Orders
+        </a>
+        <a href="{% url 'procurement:invoice_list' %}">
+            <i class="bi bi-receipt"></i> Invoices
+        </a>
+        {% endif %}
+
+        {% if user.is_vendor_role %}
+        <div class="nav-section">Vendor Portal</div>
+        <a href="{% url 'procurement:vendor_rfq_list' %}">
+            <i class="bi bi-file-earmark-text"></i> My RFQs
+        </a>
+        <a href="{% url 'procurement:quotation_list' %}">
+            <i class="bi bi-currency-dollar"></i> My Quotations
+        </a>
+        <a href="{% url 'procurement:vendor_po_list' %}">
+            <i class="bi bi-cart-check"></i> Purchase Orders
+        </a>
+        {% endif %}
+
+        {% if user.is_admin_role or user.is_manager_role %}
+        <div class="nav-section">Workflow</div>
+        <a href="{% url 'procurement:approval_list' %}">
+            <i class="bi bi-check2-square"></i> Approvals
+        </a>
+        {% endif %}
+
+        {% if user.is_admin_role or user.is_manager_role or user.is_procurement_officer %}
+        <div class="nav-section">Analytics</div>
+        <a href="{% url 'core:reports' %}">
+            <i class="bi bi-bar-chart"></i> Reports
+        </a>
+        {% endif %}
+
+        <div class="nav-section">System</div>
+        <a href="{% url 'core:activity_log' %}">
+            <i class="bi bi-clock-history"></i> Activity Log
+        </a>
+        {% if user.is_admin_role %}
+        <a href="{% url 'accounts:manage_users' %}">
+            <i class="bi bi-person-gear"></i> Manage Users
+        </a>
+        {% endif %}
+        <a href="{% url 'accounts:logout' %}">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
+</nav>

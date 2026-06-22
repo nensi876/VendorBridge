@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Approvals{% endblock %}
+{% block content %}
+<h1 class="page-title">Approval Workflow</h1>
+<p class="page-subtitle">Review and manage approval requests</p>
+
+<div class="filter-bar">
+    <form method="get" class="row g-2">
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="approved" {% if selected_status == 'approved' %}selected{% endif %}>Approved</option>
+                <option value="rejected" {% if selected_status == 'rejected' %}selected{% endif %}>Rejected</option>
+            </select>
+        </div>
+        <div class="col-md-2"><button type="submit" class="btn btn-vb-primary">Filter</button></div>
+    </form>
+</div>
+
+<div class="card-panel">
+    <div class="card-body p-0">
+        <table class="table table-vb mb-0">
+            <thead><tr><th>RFQ</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Approver</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for a in approvals %}
+                <tr>
+                    <td><a href="{% url 'procurement:approval_detail' a.pk %}">{{ a.rfq.rfq_number }}</a></td>
+                    <td>{{ a.quotation.vendor.company_name|default:"—" }}</td>
+                    <td>{% if a.quotation %}₹{{ a.quotation.quoted_price|floatformat:2 }}{% else %}—{% endif %}</td>
+                    <td>
+                        {% if a.status == 'pending' %}<span class="badge bg-warning">Pending</span>
+                        {% elif a.status == 'approved' %}<span class="badge bg-success">Approved</span>
+                        {% else %}<span class="badge bg-danger">Rejected</span>{% endif %}
+                    </td>
+                    <td>{{ a.approver.get_full_name|default:"—" }}</td>
+                    <td>{{ a.approval_date|date:"d M Y"|default:"—" }}</td>
+                    <td>
+                        {% if a.status == 'pending' %}
+                        <a href="{% url 'procurement:approval_action' a.pk 'approve' %}" class="btn btn-sm btn-success"><i class="bi bi-check-lg"></i></a>
+                        <a href="{% url 'procurement:approval_action' a.pk 'reject' %}" class="btn btn-sm btn-danger"><i class="bi bi-x-lg"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No approval requests.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

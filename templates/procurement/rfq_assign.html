@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Assign Vendors{% endblock %}
+{% block content %}
+<h1 class="page-title">Assign Vendors to {{ rfq.rfq_number }}</h1>
+<div class="card-panel">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                {% for checkbox in form.assigned_vendors %}
+                <div class="col-md-4 mb-2">
+                    <div class="form-check">
+                        {{ checkbox.tag }}
+                        <label class="form-check-label">{{ checkbox.choice_label }}</label>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-vb-primary mt-3">Assign Vendors</button>
+            <a href="{% url 'procurement:rfq_detail' rfq.pk %}" class="btn btn-outline-secondary mt-3">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Activity Log{% endblock %}
+{% block content %}
+<h1 class="page-title">Activity Log</h1>
+<p class="page-subtitle">Complete procurement activity history</p>
+
+<div class="filter-bar">
+    <form method="get" class="row g-2">
+        <div class="col-md-4">
+            <input type="text" name="module" class="form-control" placeholder="Filter by module..." value="{{ selected_module }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-vb-primary">Filter</button>
+        </div>
+    </form>
+</div>
+
+<div class="card-panel">
+    <div class="card-body p-0">
+        <table class="table table-vb mb-0">
+            <thead>
+                <tr><th>Timestamp</th><th>User</th><th>Module</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.timestamp|date:"d M Y H:i" }}</td>
+                    <td>{{ log.user.get_full_name|default:log.user.username|default:"System" }}</td>
+                    <td><span class="badge bg-secondary">{{ log.module }}</span></td>
+                    <td>{{ log.action }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-center text-muted py-4">No activity logs found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

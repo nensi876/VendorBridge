@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Reports & Analytics{% endblock %}
+{% block content %}
+<h1 class="page-title">Reports & Analytics</h1>
+<p class="page-subtitle">Procurement insights and performance metrics</p>
+
+<div class="mb-3">
+    <a href="{% url 'core:export_reports' %}" class="btn btn-vb-primary"><i class="bi bi-download"></i> Export to CSV</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ procurement_summary.total_rfqs }}</div><div class="stat-label">Total RFQs</div></div></div>
+    <div class="col-md-3"><div class="stat-card success"><div class="stat-value">{{ procurement_summary.total_quotations }}</div><div class="stat-label">Quotations</div></div></div>
+    <div class="col-md-3"><div class="stat-card warning"><div class="stat-value">{{ procurement_summary.total_pos }}</div><div class="stat-label">Purchase Orders</div></div></div>
+    <div class="col-md-3"><div class="stat-card danger"><div class="stat-value">₹{{ procurement_summary.total_spending|floatformat:0 }}</div><div class="stat-label">Total Spending</div></div></div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Vendor Performance Report</div>
+            <div class="card-body p-0">
+                <table class="table table-vb mb-0">
+                    <thead><tr><th>Vendor</th><th>POs</th><th>Quotations</th><th>Total Value</th></tr></thead>
+                    <tbody>
+                        {% for v in vendor_performance %}
+                        <tr>
+                            <td>{{ v.company_name }}</td>
+                            <td>{{ v.po_count }}</td>
+                            <td>{{ v.quotation_count }}</td>
+                            <td>₹{{ v.total_value|default:0|floatformat:0 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted">No data available.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Monthly Procurement Trends</div>
+            <div class="card-body p-0">
+                <table class="table table-vb mb-0">
+                    <thead><tr><th>Month</th><th>Orders</th><th>Spending</th></tr></thead>
+                    <tbody>
+                        {% for t in monthly_trends %}
+                        <tr>
+                            <td>{{ t.month|date:"M Y" }}</td>
+                            <td>{{ t.count }}</td>
+                            <td>₹{{ t.total|default:0|floatformat:0 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted">No trends data.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-1">
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Approval Statistics</div>
+            <div class="card-body">
+                {% for s in approval_statistics %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>{{ s.status|title }}</span>
+                    <span class="badge bg-primary">{{ s.count }}</span>
+                </div>
+                {% empty %}
+                <p class="text-muted">No approval data.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Spending Analysis by Category</div>
+            <div class="card-body p-0">
+                <table class="table table-vb mb-0">
+                    <thead><tr><th>Category</th><th>Total Spending</th></tr></thead>
+                    <tbody>
+                        {% for s in spending_by_category %}
+                        <tr>
+                            <td>{{ s.category|title }}</td>
+                            <td>₹{{ s.total|default:0|floatformat:0 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="2" class="text-center text-muted">No spending data.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

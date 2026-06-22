@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Print Invoice{% endblock %}
+{% block content %}
+<div class="invoice-print">
+    <div class="text-center mb-4">
+        <h2>VendorBridge</h2>
+        <p class="text-muted">Tax Invoice</p>
+    </div>
+    <div class="row mb-4">
+        <div class="col-6">
+            <strong>Invoice #:</strong> {{ invoice.invoice_number }}<br>
+            <strong>Date:</strong> {{ invoice.created_at|date:"d M Y" }}<br>
+            <strong>PO #:</strong> {{ invoice.purchase_order.po_number }}
+        </div>
+        <div class="col-6 text-end">
+            <strong>Bill To:</strong><br>
+            {{ invoice.purchase_order.vendor.company_name }}<br>
+            {{ invoice.purchase_order.vendor.address }}<br>
+            GST: {{ invoice.purchase_order.vendor.gst_number }}
+        </div>
+    </div>
+    <table class="table table-bordered">
+        <thead><tr><th>Description</th><th>Amount</th></tr></thead>
+        <tbody>
+            <tr>
+                <td>{{ invoice.purchase_order.quotation.rfq.product_name }} (Qty: {{ invoice.purchase_order.quotation.rfq.quantity }})</td>
+                <td>₹{{ invoice.subtotal|floatformat:2 }}</td>
+            </tr>
+            <tr><td>GST (18%)</td><td>₹{{ invoice.gst|floatformat:2 }}</td></tr>
+            <tr><td>Tax</td><td>₹{{ invoice.tax|floatformat:2 }}</td></tr>
+            <tr class="table-active"><td><strong>Grand Total</strong></td><td><strong>₹{{ invoice.grand_total|floatformat:2 }}</strong></td></tr>
+        </tbody>
+    </table>
+    <p class="text-muted mt-4"><small>Status: {{ invoice.get_status_display }}</small></p>
+</div>
+<div class="text-center no-print mt-3">
+    <button onclick="window.print()" class="btn btn-vb-primary"><i class="bi bi-printer"></i> Print</button>
+    <a href="{% url 'procurement:invoice_detail' invoice.pk %}" class="btn btn-outline-secondary">Back</a>
+</div>
+{% endblock %}

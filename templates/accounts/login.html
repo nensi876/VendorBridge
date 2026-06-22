@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block auth_content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <h1><i class="bi bi-building"></i> VendorBridge</h1>
+            <p>Procurement & Vendor Management ERP</p>
+        </div>
+        {% include 'partials/messages.html' %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors.0 }}</div>{% endif %}
+            </div>
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>
+            {% endif %}
+            <button type="submit" class="btn btn-vb-primary w-100 mb-3">Sign In</button>
+        </form>
+        <div class="text-center">
+            <a href="{% url 'accounts:password_reset' %}" class="text-muted small">Forgot Password?</a>
+            <span class="mx-2 text-muted">|</span>
+            <a href="{% url 'accounts:register' %}" class="small">Create Account</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

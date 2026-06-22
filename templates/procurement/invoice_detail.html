@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{{ invoice.invoice_number }}{% endblock %}
+{% block content %}
+<h1 class="page-title">Invoice: {{ invoice.invoice_number }}</h1>
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Invoice Details</div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr><th>PO Number</th><td>{{ invoice.purchase_order.po_number }}</td></tr>
+                    <tr><th>Vendor</th><td>{{ invoice.purchase_order.vendor.company_name }}</td></tr>
+                    <tr><th>Subtotal</th><td>₹{{ invoice.subtotal|floatformat:2 }}</td></tr>
+                    <tr><th>GST (18%)</th><td>₹{{ invoice.gst|floatformat:2 }}</td></tr>
+                    <tr><th>Tax</th><td>₹{{ invoice.tax|floatformat:2 }}</td></tr>
+                    <tr><th>Grand Total</th><td><strong>₹{{ invoice.grand_total|floatformat:2 }}</strong></td></tr>
+                    <tr><th>Status</th><td>{{ invoice.get_status_display }}</td></tr>
+                </table>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'procurement:invoice_pdf' invoice.pk %}" class="btn btn-outline-danger"><i class="bi bi-file-pdf"></i> Download PDF</a>
+                    <a href="{% url 'procurement:invoice_print' invoice.pk %}" class="btn btn-outline-secondary" target="_blank"><i class="bi bi-printer"></i> Print</a>
+                    <a href="{% url 'procurement:invoice_send_email' invoice.pk %}" class="btn btn-vb-primary"><i class="bi bi-envelope"></i> Send Email</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

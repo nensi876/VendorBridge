@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ action|title }} Approval{% endblock %}
+{% block content %}
+<h1 class="page-title">{{ action|title }} Approval Request</h1>
+<p class="page-subtitle">RFQ: {{ approval.rfq.rfq_number }} — {{ approval.rfq.title }}</p>
+
+<div class="card-panel">
+    <div class="card-body">
+        <p><strong>Vendor:</strong> {{ approval.quotation.vendor.company_name }}</p>
+        <p><strong>Amount:</strong> ₹{{ approval.quotation.quoted_price|floatformat:2 }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Remarks</label>
+                {{ form.remarks }}
+            </div>
+            <button type="submit" class="btn btn-{% if action == 'approve' %}success{% else %}danger{% endif %}">
+                Confirm {{ action|title }}
+            </button>
+            <a href="{% url 'procurement:approval_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

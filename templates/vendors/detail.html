@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}{{ vendor.company_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="page-title mb-0">{{ vendor.company_name }}</h1>
+        <p class="page-subtitle mb-0">{{ vendor.vendor_name }} · {{ vendor.get_category_display }}</p>
+    </div>
+    <div>
+        <a href="{% url 'vendors:edit' vendor.pk %}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+        <a href="{% url 'vendors:list' %}" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card-panel">
+            <div class="card-header">Vendor Details</div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr><th>GST Number</th><td>{{ vendor.gst_number|default:"—" }}</td></tr>
+                    <tr><th>Email</th><td>{{ vendor.email }}</td></tr>
+                    <tr><th>Phone</th><td>{{ vendor.phone }}</td></tr>
+                    <tr><th>Address</th><td>{{ vendor.address }}</td></tr>
+                    <tr><th>Status</th><td><span class="badge bg-{% if vendor.status == 'active' %}success{% else %}secondary{% endif %}">{{ vendor.get_status_display }}</span></td></tr>
+                    <tr><th>Rating</th><td><i class="bi bi-star-fill text-warning"></i> {{ vendor.rating }}/5</td></tr>
+                    <tr><th>Created</th><td>{{ vendor.created_at|date:"d M Y" }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

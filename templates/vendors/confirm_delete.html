@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Delete Vendor{% endblock %}
+{% block content %}
+<h1 class="page-title">Delete Vendor</h1>
+<div class="card-panel">
+    <div class="card-body">
+        <p>Are you sure you want to delete <strong>{{ vendor.company_name }}</strong>?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'vendors:detail' vendor.pk %}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

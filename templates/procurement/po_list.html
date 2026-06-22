@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Purchase Orders{% endblock %}
+{% block content %}
+<h1 class="page-title">Purchase Orders</h1>
+<div class="card-panel">
+    <div class="card-body p-0">
+        <table class="table table-vb mb-0">
+            <thead><tr><th>PO #</th><th>Vendor</th><th>RFQ</th><th>Amount</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for po in purchase_orders %}
+                <tr>
+                    <td><a href="{% url 'procurement:po_detail' po.pk %}">{{ po.po_number }}</a></td>
+                    <td>{{ po.vendor.company_name }}</td>
+                    <td>{{ po.quotation.rfq.rfq_number }}</td>
+                    <td>₹{{ po.amount|floatformat:2 }}</td>
+                    <td>{{ po.get_status_display }}</td>
+                    <td>{{ po.created_at|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{% url 'procurement:po_pdf' po.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-pdf"></i></a>
+                        {% if not po.invoice %}
+                        <a href="{% url 'procurement:invoice_generate' po.pk %}" class="btn btn-sm btn-vb-primary">Invoice</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No purchase orders.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

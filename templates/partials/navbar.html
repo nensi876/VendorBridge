@@ -1,0 +1,38 @@
+<div class="topbar">
+    <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-sm btn-outline-secondary d-md-none" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+        </button>
+        <div>
+            <strong>{{ user.get_full_name|default:user.username }}</strong>
+            <span class="badge bg-primary ms-2">{{ user.get_role_display }}</span>
+        </div>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary position-relative" data-bs-toggle="dropdown">
+                <i class="bi bi-bell"></i>
+                {% if unread_notifications %}
+                <span class="notification-badge">{{ unread_notifications }}</span>
+                {% endif %}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" style="min-width: 300px;">
+                <li><h6 class="dropdown-header">Notifications</h6></li>
+                {% for n in recent_notifications %}
+                <li>
+                    <a class="dropdown-item {% if not n.is_read %}fw-bold{% endif %}" href="{% url 'core:mark_notification_read' n.pk %}">
+                        <small class="text-muted">{{ n.created_at|timesince }} ago</small><br>
+                        {{ n.title }}
+                    </a>
+                </li>
+                {% empty %}
+                <li><span class="dropdown-item text-muted">No notifications</span></li>
+                {% endfor %}
+                {% if unread_notifications %}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-center" href="{% url 'core:mark_all_notifications_read' %}">Mark all as read</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>

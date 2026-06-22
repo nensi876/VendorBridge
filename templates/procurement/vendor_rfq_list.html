@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}My RFQs{% endblock %}
+{% block content %}
+<h1 class="page-title">Assigned RFQs</h1>
+<p class="page-subtitle">RFQs assigned to {{ vendor.company_name|default:"your account" }}</p>
+
+<div class="card-panel">
+    <div class="card-body p-0">
+        <table class="table table-vb mb-0">
+            <thead><tr><th>RFQ #</th><th>Title</th><th>Product</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for rfq in rfqs %}
+                <tr>
+                    <td>{{ rfq.rfq_number }}</td>
+                    <td>{{ rfq.title }}</td>
+                    <td>{{ rfq.product_name }}</td>
+                    <td>{{ rfq.deadline|date:"d M Y" }}</td>
+                    <td><span class="badge bg-info">{{ rfq.get_status_display }}</span></td>
+                    <td><a href="{% url 'procurement:vendor_rfq_detail' rfq.pk %}" class="btn btn-sm btn-vb-primary">View</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No RFQs assigned.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
